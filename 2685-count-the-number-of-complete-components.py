@@ -9,4 +9,39 @@ class Solution(object):
         :type edges: List[List[int]]
         :rtype: int
         """
-        
+        # Create adjacency list representation of the graph
+        graph = [[] for _ in range(n)]
+        for u, v in edges:
+            graph[u].append(v)
+            graph[v].append(u)
+
+        # Find all connected components
+        components = []
+        visited = [False] * n
+        for i in range(n):
+            if not visited[i]:
+                component = []
+                self.dfs(i, graph, visited, component)
+                components.append(component)
+
+        # Count complete connected components
+        count = 0
+        for component in components:
+            if self.isComplete(component, graph):
+                count += 1
+
+        return count
+
+    def dfs(self, vertex, graph, visited, component):
+        visited[vertex] = True
+        component.append(vertex)
+        for neighbor in graph[vertex]:
+            if not visited[neighbor]:
+                self.dfs(neighbor, graph, visited, component)
+
+    def isComplete(self, component, graph):
+        for vertex1 in component:
+            for vertex2 in component:
+                if vertex1 != vertex2 and vertex2 not in graph[vertex1]:
+                    return False
+        return True
